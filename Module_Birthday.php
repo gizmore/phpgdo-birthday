@@ -116,7 +116,7 @@ final class Module_Birthday extends GDO_Module
         $user = GDO_User::current();
         if ($birthdate = $this->getUserBirthdate($user))
         {
-            $data = $activation->getValue('ua_data');
+            $data = $activation->gdoValue('ua_data');
             $data['birthday'] = $birthdate;
             $activation->setValue('ua_data', $data);
         }
@@ -126,7 +126,7 @@ final class Module_Birthday extends GDO_Module
     {
     	if ($activation)
     	{
-	        $data = $activation->getValue('ua_data');
+	        $data = $activation->gdoValue('ua_data');
 	        if ($data['birthday'])
 	        {
 	            $this->saveUserSetting($user, 'birthday', $data['birthday']);

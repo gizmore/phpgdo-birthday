@@ -25,7 +25,7 @@ final class VerifyAge extends MethodForm
     
     public function createForm(GDT_Form $form) : void
     {
-        $form->info(t('info_age_verify', [$this->age]));
+        $form->text('info_age_verify', [$this->age]);
         $form->addFields([
             GDT_Birthdate::make()->notNull(),
             GDT_AntiCSRF::make(),
