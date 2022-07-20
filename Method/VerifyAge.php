@@ -16,8 +16,8 @@ use GDO\Date\Time;
  */
 final class VerifyAge extends MethodForm
 {
-    public $age = 18;
-    public function age($age)
+    public int $age = 18;
+    public function age(int $age) : self
     {
         $this->age = $age;
         return $this;
@@ -25,11 +25,12 @@ final class VerifyAge extends MethodForm
     
     public function createForm(GDT_Form $form) : void
     {
+    	$form->action(href('Birthday', 'VerifyAge'));
         $form->text('info_age_verify', [$this->age]);
-        $form->addFields([
+        $form->addFields(
             GDT_Birthdate::make()->notNull(),
             GDT_AntiCSRF::make(),
-        ]);
+        );
         $form->actions()->addField(GDT_Submit::make());
     }
     

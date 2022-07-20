@@ -13,7 +13,7 @@ use GDO\Date\GDT_Date;
 final class GDT_Birthdate extends GDT_Date
 {
 	public string $icon = 'birthday';
-	public function defaultName() { return 'birthdate'; }
+	public function getDefaultName() : ?string { return 'birthdate'; }
     public function defaultLabel() : self { return $this->label('birthdate'); }
 	
 }

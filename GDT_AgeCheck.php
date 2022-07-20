@@ -3,10 +3,15 @@ namespace GDO\Birthday;
 
 use GDO\Core\GDT_Method;
 use GDO\Birthday\Method\VerifyAge;
+use GDO\Core\WithError;
+use GDO\Core\WithInstance;
 
 final class GDT_AgeCheck extends GDT_Method
 {
-    public function defaultName()
+	use WithError;
+	use WithInstance;
+	
+    public function getDefaultName() : ?string
     {
         return 'agecheck';
     }
@@ -29,5 +34,12 @@ final class GDT_AgeCheck extends GDT_Method
         $this->error('err_age_verify', [$this->minAge]);
         return $this;
     }
+ 
+//     public function renderCell() : string
+//     {
+//     	$result = $this->execute();
+//     	$html = $result->renderCell();
+//     	return $html;
+//     }
     
 }

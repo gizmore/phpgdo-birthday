@@ -9,7 +9,6 @@ use GDO\Core\GDT_UInt;
 use GDO\User\GDO_User;
 use GDO\Date\Time;
 use GDO\Session\GDO_Session;
-use GDO\Core\GDT_Response;
 use GDO\Core\Application;
 use GDO\Register\GDO_UserActivation;
 
@@ -24,8 +23,6 @@ use GDO\Register\GDO_UserActivation;
  */
 final class Module_Birthday extends GDO_Module
 {
-    public function getDependencies() : array { return ['Profile', 'Friends']; }
-    
     public function onLoadLanguage() : void { $this->loadLanguage('lang/birthday'); }
     
     public function getConfig() : array
@@ -68,21 +65,19 @@ final class Module_Birthday extends GDO_Module
     ####################
     public function agecheckDisplay($minAge)
     {
-        return GDT_Response::makeWith(
-            GDT_AgeCheck::make()->
-            minAge($minAge)->errorMinAge())
-            ->code(403);
+        return GDT_AgeCheck::instance()->minAge($minAge)->errorMinAge();
     }
     
     public function agecheckIsMethodExcepted()
     {
-        $mome = strtolower(mo() . '::' . me());
+        $mome = Application::$INSTANCE->mome();
         $exceptions = [
             'birthday::verifyage',
             'captcha::image',
             'language::gettransdata',
             'login::form',
         	'dsgvo::accept',
+        	'core::fileserver',
         ];
         return in_array($mome, $exceptions, true);
     }
