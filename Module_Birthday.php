@@ -4,7 +4,7 @@ namespace GDO\Birthday;
 use GDO\Core\GDO_Module;
 use GDO\Core\GDT_Checkbox;
 use GDO\Form\GDT_Form;
-use GDO\Friends\GDT_ACL;
+use GDO\User\GDT_ACL;
 use GDO\Core\GDT_UInt;
 use GDO\User\GDO_User;
 use GDO\Date\Time;
