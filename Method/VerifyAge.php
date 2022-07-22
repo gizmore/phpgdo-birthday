@@ -8,6 +8,8 @@ use GDO\Form\GDT_Submit;
 use GDO\Birthday\GDT_Birthdate;
 use GDO\Session\GDO_Session;
 use GDO\Date\Time;
+use GDO\Birthday\Module_Birthday;
+use GDO\User\GDO_User;
 
 /**
  * Show age verify form.
@@ -36,12 +38,22 @@ final class VerifyAge extends MethodForm
     
     public function formValidated(GDT_Form $form)
     {
-        $birthdate = $form->getFormVar('birthdate');
-        GDO_Session::set('birthdate', $birthdate);
+        $birthdate = $form->getFormVar('birthday');
+        $this->saveBirthday($birthdate);
         return $this->message('msg_birthdate_session_set', [
             Time::displayDate($birthdate, 'day'),
             Time::displayAge($birthdate),
         ]);
+    }
+    
+    private function saveBirthday(string $birthdate)
+    {
+        GDO_Session::set('birthday', $birthdate);
+        $user = GDO_User::current();
+        if ($user->isUser())
+        {
+        	Module_Birthday::instance()->saveUserSetting($user, 'birthday', $birthdate);
+        }
     }
     
 }

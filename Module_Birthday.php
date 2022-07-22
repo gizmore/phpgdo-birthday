@@ -133,7 +133,7 @@ final class Module_Birthday extends GDO_Module
     {
         if (class_exists('GDO\Session\GDO_Session', false))
         {
-            return GDO_Session::get('birthdate');
+            return GDO_Session::get('birthday');
         }
     }
     
