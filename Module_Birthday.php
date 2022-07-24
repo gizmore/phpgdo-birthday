@@ -51,7 +51,7 @@ final class Module_Birthday extends GDO_Module
     /**
      * @TODO implement: On init, display other people birthda[yte]s.
      */
-    public function onInit() : void
+    public function onInit()
     {
     }
     

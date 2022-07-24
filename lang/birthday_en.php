@@ -11,7 +11,7 @@ return [
     'cfg_global_min_age' => 'Min. age for the whole site',
     'cfg_method_min_age' => 'Min. age for granular methods',
     
-    'ft_birthday_verifyage' => 'Age restricted access',
+    'mt_birthday_verifyage' => 'Age restricted access',
     'info_age_verify' => 'Please tell us your birthday to verify you are at least %s years old.',
     'err_age_verify' => 'You are not allowed to view this, because you are not old enough. You need to be %s years old.',
     'msg_birthdate_session_set' => 'Your birthdate has been set to %s. Your age has been set to %s years.',
