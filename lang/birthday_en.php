@@ -3,6 +3,7 @@ namespace GDO\Birthday\lang;
 return [
     'birthdate' => 'Birthdate',
     'announce_my_birthday' => 'Announce my birthday to others?',
+	'announce_me_birthdays' => 'Send me an email if someone has birthday?',
 
     'age_visible' => 'Show your age to',
     'birthdate_visible' => 'Show your birthdate to',
@@ -16,4 +17,16 @@ return [
     'err_age_verify' => 'You are not allowed to view this, because you are not old enough. You need to be %s years old.',
     'msg_birthdate_session_set' => 'Your birthdate has been set to %s. Your age has been set to %s years.',
     
+	'mailsubj_birthdays' => '%s: Birthdays!',
+	'mailline_birthdays' => "%s is %s years old today!\n",
+	'mailbody_birthdays' => '
+Dear %s,
+
+The following people on %s have birthday today:
+
+%s
+
+Kind Regards
+%2$s System',
+	
 ];

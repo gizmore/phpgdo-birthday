@@ -11,6 +11,9 @@ use GDO\Date\Time;
 use GDO\Session\GDO_Session;
 use GDO\Core\Application;
 use GDO\Register\GDO_UserActivation;
+use GDO\UI\GDT_Card;
+use GDO\Date\GDT_Duration;
+use GDO\User\GDT_ACLRelation;
 
 /**
  * Birthday module.
@@ -18,7 +21,7 @@ use GDO\Register\GDO_UserActivation;
  * - Age verification for methods and global.
  * 
  * @author gizmore
- * @version 6.11.0
+ * @version 7.0.1
  * @since 6.10.1
  */
 final class Module_Birthday extends GDO_Module
@@ -42,17 +45,10 @@ final class Module_Birthday extends GDO_Module
     {
         return [
             GDT_Birthdate::make('birthday'),
-            GDT_ACL::make('age_visible')->initial('acl_noone'),
-            GDT_ACL::make('birthdate_visible')->initial('acl_noone'),
-            GDT_Checkbox::make('announce_my_birthday'),
+            GDT_ACLRelation::make('age_visible')->initial('acl_noone')->noacl(),
+        	GDT_Checkbox::make('announce_my_birthday')->initial('0'),
+        	GDT_Checkbox::make('announce_me_birthdays')->initial('1'),
         ];
-    }
-    
-    /**
-     * @TODO implement: On init, display other people birthda[yte]s.
-     */
-    public function onInit()
-    {
     }
     
     public function onIncludeScripts() : void
@@ -140,6 +136,9 @@ final class Module_Birthday extends GDO_Module
     #############
     ### Hooks ###
     #############
+    /**
+     * Before any method is executed, check for age restrictions.
+     */
     public function hookBeforeExecute()
     {
         $app = Application::instance();
@@ -160,6 +159,24 @@ final class Module_Birthday extends GDO_Module
                 }
             }
         }
+    }
+    
+    /**
+     * When we render the profile card, display age if ok.
+     */
+    public function hookCreateCardUserProfile(GDT_Card $card)
+    {
+    	/** @var $user GDO_User **/
+    	/** @var $acl GDT_ACL **/
+    	$profile = $card->gdo;
+    	$user = $profile->getUser();
+    	$acl = $user->setting('Birthday', 'age_visible');
+    	$reason = '';
+    	if ($acl->hasAccess(GDO_User::current(), $user, $reason))
+    	{
+	    	$age = $this->getUserAge($user);
+    		$card->addField(GDT_Duration::make()->initialValue("{$age}y"));
+    	}
     }
     
 }
