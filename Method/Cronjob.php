@@ -44,7 +44,10 @@ final class Cronjob extends MethodCronjob
 	private function getBirthdayKids() : array
 	{
 		$today = Time::getDate(0, 'm-d');
-		return GDO_User::withSetting('Birthday', 'birthday', "____-{$today}%", true);
+		$users = GDO_User::withSetting('Birthday', 'birthday', "____-{$today}%", true);
+		return array_filter($users, function(GDO_User $user) {
+			return !!$user->settingVar('Birthday', 'announce_my_birthday');
+		});
 	}
 	
 	private function getTargets() : Result
