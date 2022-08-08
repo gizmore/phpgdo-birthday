@@ -118,7 +118,7 @@ final class Module_Birthday extends GDO_Module
     	if ($activation)
     	{
 	        $data = $activation->gdoValue('ua_data');
-	        if ($data['birthday'])
+	        if (@$data['birthday'])
 	        {
 	            $this->saveUserSetting($user, 'birthday', $data['birthday']);
 	        }
@@ -174,8 +174,8 @@ final class Module_Birthday extends GDO_Module
     	$reason = '';
     	if ($acl->hasAccess(GDO_User::current(), $user, $reason))
     	{
-	    	$age = $this->getUserAge($user);
-    		$card->addField(GDT_Duration::make()->initialValue("{$age}y"));
+	    	$age = floor($this->getUserAge($user));
+    		$card->addField(GDT_Duration::make()->icon('birthday')->label('age')->initial("{$age}y"));
     	}
     }
     
