@@ -35,10 +35,10 @@ final class GDT_AgeCheck extends GDT_Method
         return $this;
     }
  
-//     public function renderCell() : string
+//     public function renderHTML() : string
 //     {
 //     	$result = $this->execute();
-//     	$html = $result->renderCell();
+//     	$html = $result->renderHTML();
 //     	return $html;
 //     }
     
