@@ -19,7 +19,7 @@ trait WithAgeCheck
     
     public function beforeExecute() : void
     {
-        return $this->agecheckBeforeExecute();
+        $this->agecheckBeforeExecute();
     }
     
     protected function agecheckBeforeExecute()
@@ -30,7 +30,7 @@ trait WithAgeCheck
             if (!$this->agecheckTest())
             {
                 $minAge = $this->agecheckAge();
-                return $this->error('err_age_verify', [
+                $this->error('err_age_verify', [
                     $minAge,
                 ])->addField(GDT_AgeCheck::make()->minAge($minAge));
             }

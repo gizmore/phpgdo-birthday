@@ -18,6 +18,11 @@ use GDO\User\GDO_User;
  */
 final class VerifyAge extends MethodForm
 {
+	public function isUserRequired(): bool
+	{
+		return false;
+	}
+	
     public int $age = 18;
     public function age(int $age) : self
     {

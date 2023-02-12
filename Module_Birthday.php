@@ -14,6 +14,9 @@ use GDO\Register\GDO_UserActivation;
 use GDO\UI\GDT_Card;
 use GDO\Date\GDT_Duration;
 use GDO\User\GDT_ACLRelation;
+use GDO\Core\Method;
+use GDO\Util\Strings;
+use GDO\UI\GDT_Page;
 
 /**
  * Birthday module.
@@ -27,6 +30,13 @@ use GDO\User\GDT_ACLRelation;
 final class Module_Birthday extends GDO_Module
 {
 
+	public function getFriendencies(): array
+	{
+		return [
+			'Session',
+		];
+	}
+	
 	public function onLoadLanguage(): void
 	{
 		$this->loadLanguage('lang/birthday');
@@ -80,12 +90,21 @@ final class Module_Birthday extends GDO_Module
 	# ###################
 	public function agecheckDisplay($minAge)
 	{
-		return GDT_AgeCheck::instance()->minAge($minAge)->errorMinAge();
+		Application::$RESPONSE_CODE = 403;
+		global $me;
+		$method = GDT_AgeCheck::instance()->minAge($minAge)->errorMinAge();
+		$me = $method->method;
+		return $me ? $method : $method; # warning removed
 	}
 
 	public function agecheckIsMethodExcepted()
 	{
-		$mome = Application::$INSTANCE->mome();
+		/**
+		 * @var $me Method
+		 */
+		global $me;
+		$mome = $me->getModuleName() . '::' . $me->getMethodName();
+		$mome = strtolower($mome);
 		$exceptions = [
 			'birthday::verifyage',
 			'captcha::image',
@@ -152,6 +171,21 @@ final class Module_Birthday extends GDO_Module
 		}
 	}
 
+	public function hookBeforeServeAsset(string $url)
+	{
+		$url = Strings::substrTo($url, '?', $url);
+		if (preg_match('/\\.(?:jpg|jpeg)$/iD', $url))
+		{
+			$minAge = $this->cfgGlobalMinAge();
+			if (!$this->agecheckGlobal($minAge))
+			{
+				$method = $this->agecheckDisplay($minAge);
+				GDT_Page::instance()->topResponse()->addField(
+					$method->method->executeWithInputs(['submit' => 1]));
+			}
+		}
+	}
+	
 	# ############
 	# ## Hooks ###
 	# ############
