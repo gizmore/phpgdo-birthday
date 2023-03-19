@@ -24,7 +24,7 @@ final class VerifyAge extends MethodForm
 	}
 	
     public int $age = 18;
-    public function age(int $age) : self
+    public function age(int $age): static
     {
         $this->age = $age;
         return $this;
