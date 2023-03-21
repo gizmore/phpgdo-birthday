@@ -1,31 +1,31 @@
 <?php
 namespace GDO\Birthday;
 
+use GDO\Core\Application;
 use GDO\Core\GDO_Module;
 use GDO\Core\GDT_Checkbox;
-use GDO\Form\GDT_Form;
-use GDO\User\GDT_ACL;
 use GDO\Core\GDT_UInt;
-use GDO\User\GDO_User;
-use GDO\Date\Time;
-use GDO\Session\GDO_Session;
-use GDO\Core\Application;
-use GDO\Register\GDO_UserActivation;
-use GDO\UI\GDT_Card;
-use GDO\Date\GDT_Duration;
-use GDO\User\GDT_ACLRelation;
 use GDO\Core\Method;
-use GDO\Util\Strings;
+use GDO\Date\GDT_Duration;
+use GDO\Date\Time;
+use GDO\Form\GDT_Form;
+use GDO\Register\GDO_UserActivation;
+use GDO\Session\GDO_Session;
+use GDO\UI\GDT_Card;
 use GDO\UI\GDT_Page;
+use GDO\User\GDO_User;
+use GDO\User\GDT_ACL;
+use GDO\User\GDT_ACLRelation;
+use GDO\Util\Strings;
 
 /**
  * Birthday module.
  * - Birthday alerts
  * - Age verification for methods and global.
  *
- * @author gizmore
  * @version 7.0.1
  * @since 6.10.1
+ * @author gizmore
  */
 final class Module_Birthday extends GDO_Module
 {
@@ -36,7 +36,7 @@ final class Module_Birthday extends GDO_Module
 			'Session',
 		];
 	}
-	
+
 	public function onLoadLanguage(): void
 	{
 		$this->loadLanguage('lang/birthday');
@@ -51,23 +51,8 @@ final class Module_Birthday extends GDO_Module
 				->initial('0'),
 			GDT_UInt::make('method_min_age')->bytes(1)
 				->unsigned()
-				->initial('21')
+				->initial('21'),
 		];
-	}
-
-	public function cfgBirthdayAlerts()
-	{
-		return $this->getConfigVar('birthday_alerts');
-	}
-
-	public function cfgGlobalMinAge()
-	{
-		return $this->getConfigVar('global_min_age');
-	}
-
-	public function cfgMethodMinAge()
-	{
-		return $this->getConfigVar('method_min_age');
 	}
 
 	public function getUserSettings()
@@ -76,7 +61,7 @@ final class Module_Birthday extends GDO_Module
 			GDT_Birthdate::make('birthday'),
 			GDT_ACLRelation::make('age_visible')->initial('acl_noone')->noacl(),
 			GDT_Checkbox::make('announce_my_birthday')->initial('0'),
-			GDT_Checkbox::make('announce_me_birthdays')->initial('1')
+			GDT_Checkbox::make('announce_me_birthdays')->initial('1'),
 		];
 	}
 
@@ -85,59 +70,14 @@ final class Module_Birthday extends GDO_Module
 		$this->addCSS('css/birthday.css');
 	}
 
-	# ###################
-	# ## Agecheck API ###
-	# ###################
-	public function agecheckDisplay($minAge)
+	public function cfgBirthdayAlerts()
 	{
-		Application::$RESPONSE_CODE = 403;
-		global $me;
-		$method = GDT_AgeCheck::instance()->minAge($minAge)->errorMinAge();
-		$me = $method->method;
-		return $me ? $method : $method; # warning removed
+		return $this->getConfigVar('birthday_alerts');
 	}
 
-	public function agecheckIsMethodExcepted()
+	public function cfgMethodMinAge()
 	{
-		/**
-		 * @var $me Method
-		 */
-		global $me;
-		$mome = $me->getModuleName() . '::' . $me->getMethodName();
-		$mome = strtolower($mome);
-		$exceptions = [
-			'birthday::verifyage',
-			'captcha::image',
-			'language::gettransdata',
-			'login::form',
-			'dsgvo::accept',
-			'core::fileserver'
-		];
-		return in_array($mome, $exceptions, true);
-	}
-
-	public function agecheckGlobal($minAge)
-	{
-		$user = GDO_User::current();
-		$age = $this->getUserAge($user);
-		return $age >= $minAge;
-	}
-
-	public function getUserBirthdate(GDO_User $user)
-	{
-		if ( !($birthdate = $this->userSettingVar($user, 'birthday')))
-		{
-			if ( !($birthdate = $this->getUserAgeSession($user)))
-			{
-				return null;
-			}
-		}
-		return $birthdate;
-	}
-
-	public function getUserAge(GDO_User $user)
-	{
-		return Time::getAge($this->getUserBirthdate($user));
+		return $this->getConfigVar('method_min_age');
 	}
 
 	public function hookOnRegister(GDT_Form $form, GDO_UserActivation $activation)
@@ -151,6 +91,30 @@ final class Module_Birthday extends GDO_Module
 		}
 	}
 
+	# ###################
+	# ## Agecheck API ###
+	# ###################
+
+	public function getUserBirthdate(GDO_User $user)
+	{
+		if (!($birthdate = $this->userSettingVar($user, 'birthday')))
+		{
+			if (!($birthdate = $this->getUserAgeSession($user)))
+			{
+				return null;
+			}
+		}
+		return $birthdate;
+	}
+
+	private function getUserAgeSession(GDO_User $user)
+	{
+		if (class_exists('GDO\Session\GDO_Session', false))
+		{
+			return GDO_Session::get('birthday');
+		}
+	}
+
 	public function hookUserActivated(GDO_User $user, GDO_UserActivation $activation = null)
 	{
 		if ($activation)
@@ -160,14 +124,6 @@ final class Module_Birthday extends GDO_Module
 			{
 				$this->saveUserSetting($user, 'birthday', $data['birthday']);
 			}
-		}
-	}
-
-	private function getUserAgeSession(GDO_User $user)
-	{
-		if (class_exists('GDO\Session\GDO_Session', false))
-		{
-			return GDO_Session::get('birthday');
 		}
 	}
 
@@ -185,26 +141,49 @@ final class Module_Birthday extends GDO_Module
 			}
 		}
 	}
-	
-	# ############
-	# ## Hooks ###
-	# ############
+
+	public function cfgGlobalMinAge()
+	{
+		return $this->getConfigVar('global_min_age');
+	}
+
+	public function agecheckGlobal($minAge)
+	{
+		$user = GDO_User::current();
+		$age = $this->getUserAge($user);
+		return $age >= $minAge;
+	}
+
+	public function getUserAge(GDO_User $user)
+	{
+		return Time::getAge($this->getUserBirthdate($user));
+	}
+
+	public function agecheckDisplay($minAge)
+	{
+		Application::$RESPONSE_CODE = 403;
+		global $me;
+		$method = GDT_AgeCheck::instance()->minAge($minAge)->errorMinAge();
+		$me = $method->method;
+		return $me ? $method : $method; # warning removed
+	}
+
 	/**
 	 * Before any method is executed, check for age restrictions.
 	 */
 	public function hookBeforeExecute()
 	{
 		$app = Application::instance();
-		if (( !$app->isInstall()) && ( !$app->isCLI()))
+		if ((!$app->isInstall()) && (!$app->isCLI()))
 		{
 			$user = GDO_User::current();
-			if ( !$user->isStaff())
+			if (!$user->isStaff())
 			{
 				if ($minAge = $this->cfgGlobalMinAge())
 				{
-					if ( !$this->agecheckIsMethodExcepted())
+					if (!$this->agecheckIsMethodExcepted())
 					{
-						if ( !$this->agecheckGlobal($minAge))
+						if (!$this->agecheckGlobal($minAge))
 						{
 							return $this->agecheckDisplay($minAge);
 						}
@@ -214,13 +193,36 @@ final class Module_Birthday extends GDO_Module
 		}
 	}
 
+	# ############
+	# ## Hooks ###
+	# ############
+
+	public function agecheckIsMethodExcepted()
+	{
+		/**
+		 * @var $me Method
+		 */
+		global $me;
+		$mome = $me->getModuleName() . '::' . $me->getMethodName();
+		$mome = strtolower($mome);
+		$exceptions = [
+			'birthday::verifyage',
+			'captcha::image',
+			'language::gettransdata',
+			'login::form',
+			'dsgvo::accept',
+			'core::fileserver',
+		];
+		return in_array($mome, $exceptions, true);
+	}
+
 	/**
 	 * When we render the profile card, display age if ok.
 	 */
 	public function hookCreateCardUserProfile(GDT_Card $card)
 	{
-		/** @var $user GDO_User **/
-		/** @var $acl GDT_ACL **/
+		/** @var $user GDO_User * */
+		/** @var $acl GDT_ACL * */
 		$profile = $card->gdo;
 		$user = $profile->getUser();
 		$acl = $user->setting('Birthday', 'age_visible');
