@@ -55,7 +55,7 @@ final class Module_Birthday extends GDO_Module
 		];
 	}
 
-	public function getUserSettings()
+	public function getUserSettings(): array
 	{
 		return [
 			GDT_Birthdate::make('birthday'),

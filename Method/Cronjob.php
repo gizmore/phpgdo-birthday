@@ -24,7 +24,7 @@ final class Cronjob extends MethodCronjob
 		return $this->runDailyAt(7);
 	}
 
-	public function run()
+	public function run(): void
 	{
 		if ($birthdaykids = $this->getBirthdayKids())
 		{

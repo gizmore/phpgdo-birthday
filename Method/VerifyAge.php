@@ -3,6 +3,7 @@ namespace GDO\Birthday\Method;
 
 use GDO\Birthday\GDT_Birthdate;
 use GDO\Birthday\Module_Birthday;
+use GDO\Core\GDT;
 use GDO\Date\Time;
 use GDO\Form\GDT_AntiCSRF;
 use GDO\Form\GDT_Form;
@@ -38,7 +39,7 @@ final class VerifyAge extends MethodForm
 		$form->actions()->addField(GDT_Submit::make());
 	}
 
-	public function formValidated(GDT_Form $form)
+	public function formValidated(GDT_Form $form): GDT
 	{
 		$birthdate = $form->getFormVar('birthday');
 		$this->saveBirthday($birthdate);
