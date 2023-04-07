@@ -2,6 +2,7 @@
 namespace GDO\Birthday\lang;
 
 return [
+	'birthday' => 'Birthdate',
 	'birthdate' => 'Birthdate',
 	'announce_my_birthday' => 'Announce my birthday to others?',
 	'announce_me_birthdays' => 'Send me an email if someone has birthday?',
