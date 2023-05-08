@@ -28,7 +28,7 @@ final class VerifyAge extends MethodForm
 		return false;
 	}
 
-	public function createForm(GDT_Form $form): void
+	protected function createForm(GDT_Form $form): void
 	{
 		$form->action(href('Birthday', 'VerifyAge'));
 		$form->text('info_age_verify', [$this->age]);
