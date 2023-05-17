@@ -23,7 +23,7 @@ use GDO\Util\Strings;
  * - Birthday alerts
  * - Age verification for methods and global.
  *
- * @version 7.0.1
+ * @version 7.0.3
  * @since 6.10.1
  * @author gizmore
  */
@@ -70,12 +70,12 @@ final class Module_Birthday extends GDO_Module
 		$this->addCSS('css/birthday.css');
 	}
 
-	public function cfgBirthdayAlerts()
+	public function cfgBirthdayAlerts(): ?string
 	{
 		return $this->getConfigVar('birthday_alerts');
 	}
 
-	public function cfgMethodMinAge()
+	public function cfgMethodMinAge(): ?string
 	{
 		return $this->getConfigVar('method_min_age');
 	}
@@ -147,19 +147,19 @@ final class Module_Birthday extends GDO_Module
 		return $this->getConfigVar('global_min_age');
 	}
 
-	public function agecheckGlobal($minAge)
+	public function agecheckGlobal($minAge): bool
 	{
 		$user = GDO_User::current();
 		$age = $this->getUserAge($user);
 		return $age >= $minAge;
 	}
 
-	public function getUserAge(GDO_User $user)
+	public function getUserAge(GDO_User $user): float
 	{
 		return Time::getAge($this->getUserBirthdate($user));
 	}
 
-	public function agecheckDisplay($minAge)
+	public function agecheckDisplay($minAge): GDT_AgeCheck
 	{
 		Application::$RESPONSE_CODE = 403;
 		global $me;
@@ -200,7 +200,7 @@ final class Module_Birthday extends GDO_Module
 	public function agecheckIsMethodExcepted()
 	{
 		/**
-		 * @var $me Method
+		 * @var Method $me
 		 */
 		global $me;
 		$mome = $me->getModuleName() . '::' . $me->getMethodName();
@@ -221,8 +221,8 @@ final class Module_Birthday extends GDO_Module
 	 */
 	public function hookCreateCardUserProfile(GDT_Card $card)
 	{
-		/** @var $user GDO_User * */
-		/** @var $acl GDT_ACL * */
+		/** @var GDO_User $user * */
+		/** @var GDT_ACL $acl * */
 		$profile = $card->gdo;
 		$user = $profile->getUser();
 		$acl = $user->setting('Birthday', 'age_visible');
