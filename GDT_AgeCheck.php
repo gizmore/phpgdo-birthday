@@ -20,7 +20,7 @@ final class GDT_AgeCheck extends GDT_Method
 		$this->method(VerifyAge::make());
 	}
 
-	public function getDefaultName(): ?string
+	public function gdtDefaultName(): ?string
 	{
 		return 'agecheck';
 	}
