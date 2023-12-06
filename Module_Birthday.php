@@ -161,7 +161,7 @@ final class Module_Birthday extends GDO_Module
 
 	public function agecheckDisplay($minAge): GDT_AgeCheck
 	{
-		Application::$RESPONSE_CODE = 403;
+//		Application::$RESPONSE_CODE = 403;
 		global $me;
 		$method = GDT_AgeCheck::instance()->minAge($minAge)->errorMinAge();
 		$me = $method->method;
