@@ -28,7 +28,12 @@ final class VerifyAge extends MethodForm
 		return false;
 	}
 
-	protected function createForm(GDT_Form $form): void
+    public function isShownInSitemap(): bool
+    {
+        return false;
+    }
+
+    protected function createForm(GDT_Form $form): void
 	{
 		$form->action(href('Birthday', 'VerifyAge'));
 		$form->text('info_age_verify', [$this->age]);
